@@ -12,11 +12,16 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-		void init();//create new particles
+		void initParticles();//create new particles
+		void initSprings();
+
 		std::vector<Particles> particles;
 		std::vector<Spring> springs;
 		void drawCoordinates();
 		ofEasyCam cam;
+		void musicInit();
+		ofSoundPlayer music;
+		void updateAllSpringsPosition();
 
 		
 };

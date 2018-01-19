@@ -109,6 +109,20 @@ void Particles::move(double dt)
 	this->r.x += this->v.x * dt;
 	this->r.y += this->v.y * dt;
 	this->r.z += this->v.z * dt;
+
+	//what when hit the "floor"?(y == 0)
+	if (this->r.y <= 0) {
+		this->r.y = 0;
+	}
+
+
+
+	
+
+
+
+
+
 }
 
 void Particles::setStartPosition(ofVec3f position) {
@@ -117,4 +131,41 @@ void Particles::setStartPosition(ofVec3f position) {
 
 ofVec3f Particles::getStartPosition() {
 	return this->startPosition;
+}
+
+void Particles::setIsStatic(bool value)
+{
+	this->isStatic = value;
+}
+
+void Particles::preparePositionVector()
+{
+	//First position, initial position
+	//particlePosition.x.push_back(RandomMinMax(400, 600));
+	//particlePosition.y.push_back(ofGetHeight());
+
+	////Secound position
+	//particlePosition.x.push_back(particlePosition.x[0] + dt * dt * (particleForce.x / mass));
+	//particlePosition.y.push_back(particlePosition.y[0] + dt * dt * (particleForce.y / mass));
+
+	////Third position, Verlet method
+	//particlePosition.x.push_back(2 * particlePosition.x[1] - particlePosition.x[0] + dt * dt * (particleForce.x / mass));
+	//particlePosition.y.push_back(2 * particlePosition.y[1] - particlePosition.y[0] + dt * dt * (particleForce.y / mass));
+}
+
+void Particles::updateVerlet() {
+	//if (!isStatic) {
+	//	v_positionNew = 2 * v_position - v_positionOld + (dt * dt * v_forces / m_mass);
+	//	v_positionOld = v_position;
+	//	v_position = v_positionNew;
+	//}
+}
+
+void Particles::updateEuler() {
+	//if (!isStatic) {
+	//	v_velocity += v_forces * dt;
+	//	v_positionNew = v_position + v_velocity * dt;
+	//	v_positionOld = v_position;
+	//	v_position = v_positionNew;
+	//}
 }

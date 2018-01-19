@@ -14,6 +14,7 @@ class Particles{
 	int radius;
 	double lifespan;
 	double bornTime;
+	bool isStatic;
 	//plan
 	//this t = clock - lifespan
 
@@ -26,6 +27,11 @@ public:
 	void move(double dt);
 	void setStartPosition(ofVec3f position);
 	ofVec3f getStartPosition();
+	void preparePositionVector();
+	void setIsStatic(bool value);
+	void updateEuler();
+	void updateVerlet();
+
 
 	int getRadius();
 	int getMass();
