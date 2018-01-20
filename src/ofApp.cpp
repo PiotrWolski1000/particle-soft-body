@@ -1,5 +1,5 @@
 #include "ofApp.h"
-#define N 10//count of particles in spring chain
+#define N 20 //count of particles in spring chain
 #define COUNTER 0//counter for first 2 steps of animation with euler equation
 //--------------------------------------------------------------
 void ofApp::setup(){//run once at the beginning
@@ -30,13 +30,16 @@ void ofApp::update(){//main animation loop
 //--------------------------------------------------------------
 void ofApp::draw(){//drawing objects section
 	cam.begin();
-	cam.lookAt(ofVec3f(0, 0, 0));//switch to center of axis coordinates
+	cam.lookAt(ofVec3f(500, 500, 500));//switch to center of axis coordinates
 	for (int i = 0; i < this->particles.size(); i++) {
 
 
 		this->drawCoordinates();//coordinates axis lines
 		//particles
-		ofSetColor(255, 0, 60);
+		if (i == 0)
+			ofSetColor(255, 0, 60);
+		else
+			ofSetColor(255, 255, 255);
 		//particless[i].sphere.setRadius(5);
 		particles[i].sphere.setPosition(particles[i].getPos().x, particles[i].getPos().y, particles[i].getPos().z);
 		particles[i].sphere.draw();
@@ -49,33 +52,25 @@ void ofApp::draw(){//drawing objects section
 
 void ofApp::initParticles() {
 
+	ofVec3f rotationPoint = ofVec3f(500, 500, 0);
+	ofVec3f startElementPosition = ofVec3f(750, 500, 0);
+	ofVec3f tempPosition = ofVec3f(0, 0 , 0);
+	float alfa = 360/N;
+
 	for (int i = 0; i < N; i++) {
 		//int mass = ofRandom(1, 10);
-		int mass = ofRandom(1, 1);
+		int mass = 1;
 		int radius = 5;
+		alfa = 360/N * i;
 		//positions
-		//int mRx = i*50;
-		int mRx = ofRandom(1, 600);
-		//int mRy = i*50;
-		int mRy = ofRandom(1, 600);
-		int mRz = 0;
-		//velocities
-		int mVx = 0;
-		int mVy = 0;
-		int mVz = 0;
-
-		//forces, null at start
-		int mFx = 0;
-		int mFy = 0;
-		int mFz = 0;
-
-
-		particles.push_back(Particles(mass, ofVec3f(mRx, mRy, mRz), ofVec3f(mVx, mVy, mVz), ofVec3f(mFx, mFy, mFz), radius));
-		particles[i].setStartPosition(ofVec3f(mRx, mRy, mRz));
-
+		//rotation matrix
+		tempPosition = ofVec3f(((int(startElementPosition.x - rotationPoint.x))*cos(PI / 180 * alfa) + (int(startElementPosition.y - rotationPoint.y))*sin(PI / 180 * alfa) + rotationPoint.x),//x
+			(int(startElementPosition.x - rotationPoint.x))*sin(PI / 180 * alfa) - (int(startElementPosition.y - rotationPoint.y))*cos((PI / 180 * alfa )- rotationPoint.y),//y
+			0);//z
+		//create and setting up the particles
+		particles.push_back(Particles(mass, tempPosition, ofVec3f(0, 0, 0), ofVec3f(0, 0, 0), radius));
+		particles[i].setStartPosition(tempPosition);
 		particles[i].setIsStatic(false);//is not a static particle
-
-		
 	}
 }
 

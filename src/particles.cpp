@@ -111,9 +111,9 @@ void Particles::move(double dt)
 	this->r.z += this->v.z * dt;
 
 	//what when hit the "floor"?(y == 0)
-	if (this->r.y <= 0) {
-		this->r.y = 0;
-	}
+	//if (this->r.y <= 0) {
+	//	this->r.y = 0;
+	//}
 
 
 
