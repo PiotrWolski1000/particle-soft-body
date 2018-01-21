@@ -1,9 +1,7 @@
 #pragma once
-
-#include <math.h>
-#include <ofVec3f.h>
 #include "ofMain.h"
-#include "Spring.h"
+#include <ofVec3f.h>
+#include <math.h>
 
 class Particles{
 
@@ -25,7 +23,7 @@ public:
 	~Particles() {};
 
 	//moving our particle
-	void move(double dt, Spring s);
+	void move(double dt);
 	void setStartPosition(ofVec3f position);
 	ofVec3f getStartPosition();
 	void setIsStatic(bool value);

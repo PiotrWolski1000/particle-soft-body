@@ -1,5 +1,4 @@
 #include "particles.h"
-
 #define G -9.81
 Particles::Particles() {};
 Particles::Particles(float masa = 1, ofVec3f pos = ofVec3f(0, 0, 0), ofVec3f vel = ofVec3f(0, 0, 0), ofVec3f force = ofVec3f(0, 0, 0), int width = 5) {
@@ -97,12 +96,13 @@ void Particles::setBornTime(double time)
 {
 	this->bornTime = time;
 }
-void Particles::move(double dt, Spring s)
+void Particles::move(double dt)
 {
 	if (!this->isStatic) {
 		this->f.x = 0;
 		this->f.z = 0;
 		this->f.y = this->m * G;
+		//this->f.y = -1;
 		//this->f.y = 0;
 
 		//velocity update
@@ -116,9 +116,9 @@ void Particles::move(double dt, Spring s)
 		this->r.z += this->v.z * dt;
 
 		//what when hit the "floor"?(y == 0)
-		if (this->r.y <= 0) {
-			this->r.y = 0;
-		}
+		//if (this->r.y <= 0) {
+		//	this->r.y = 0;
+		//}
 	}
 }
 

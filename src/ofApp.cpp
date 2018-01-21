@@ -1,11 +1,12 @@
 #include "ofApp.h"
-#define N 360 //count of particles in spring chain
+#define N 10 //count of particles in spring chain
 #define COUNTER 0//counter for first 2 steps of animation with euler equation
 //--------------------------------------------------------------
 void ofApp::setup(){//run once at the beginning
 	ofBackground(0, 0, 0, 0);
+	ofSetFrameRate(10);
 
-	volume = 1000;
+	volume = 0;
 
 	initParticles();
 	initSprings();
@@ -21,13 +22,8 @@ void ofApp::update(){//main animation loop
 	
 	std::cout << "particles count: " << particles.size() << ",\nsprings count: " << springs.size() << '\n';
 
-	//for (auto& p : particles)
-	//{
-	//	p.move(this->t);
-	//}
-
 	for (int i = 0; i < N; i++) {
-		this->particles[i].move(this->t, springs[i]);
+		this->particles[i].move(this->t);
 		
 
 		if(i == 0){
@@ -79,8 +75,8 @@ void ofApp::initParticles() {
 	float alfa = 360/N;
 
 	for (int i = 0; i < N; i++) {
-		//int mass = ofRandom(1, 10);
-		int mass = 100;
+		int mass = ofRandom(1, 10);
+		//int mass = 100;
 		int radius = 1;
 		alfa = 360/N * i;
 		//positions
@@ -91,7 +87,12 @@ void ofApp::initParticles() {
 		//create and setting up the particles
 		particles.push_back(Particles(mass, tempPosition, ofVec3f(0, 0, 0), ofVec3f(0, 0, 0), radius));
 		particles[i].setStartPosition(tempPosition);
-		particles[i].setIsStatic(false);//is not a static particle
+		
+		//only first element is static for now 
+		if(i == 0)
+			particles[i].setIsStatic(true);//is not a static particle
+		else
+			particles[i].setIsStatic(false);
 	}
 }
 
@@ -99,15 +100,16 @@ void ofApp::initSprings()
 {//here we are creating springs
 	for (int i = 0; i < particles.size(); i++) {
 		if (i == 0) {//from the last one particle to first spring
-			springs.push_back(Spring(particles[particles.size()-1].getPos(), particles[i].getPos()));
+			this->springs.push_back(Spring(this->particles[this->particles.size() - 1].getPos(), this->particles[0].getPos()));
 		}
 		else if (i == particles.size() - 1) {//from the last 
-			springs.push_back(Spring(particles[particles.size() - 2].getPos(), particles[particles.size()-1].getPos()));
+			this->springs.push_back(Spring(particles[this->particles.size() - 2].getPos(), this->particles[particles.size() - 1].getPos()));
 		}
 		else {
-			springs.push_back(Spring(particles[i - 1].getPos(), particles[i+1].getPos()));
+			this->springs.push_back(Spring(this->particles[i - 1].getPos(), this->particles[i + 1].getPos()));
 		}
-		springs[i].setRestLength();
+		this->volume += 0.5 * fabs(this->springs[i].getFrom().x - this->springs[i].getTo().x) * (springs[i].counterOfNormalVector().x * springs[i].getLength());
+		this->springs[i].setRestLength();
 	}
 }
 
@@ -135,13 +137,13 @@ void ofApp::musicInit()
 void ofApp::updateAllSpringsPosition()
 {
 	for (int i = 0; i < particles.size(); i++) {
-		if (i == 0 ) {
-			this->springs[i].updateSpringPosition(particles[particles.size()-1].getPos(), particles[1].getPos());
+		if (i == 0) {
+			this->springs[i].updateSpringPosition(particles[particles.size() - 1].getPos(), particles[i].getPos());
 		}
-		else if(i == particles.size()){//last element, connect to the first one
+		else if (i == particles.size()) {//last element, connect to the first one
 			this->springs[i].updateSpringPosition(particles[particles.size() - 2].getPos(), particles[0].getPos());
 		}
-		else 
+		else
 			this->springs[i].updateSpringPosition(this->particles[i - 1].getPos(), this->particles[i].getPos());
 	}
 }

@@ -1,5 +1,4 @@
-#include "Spring.h"
-
+#include "spring.h"
 Spring::Spring(ofVec3f from, ofVec3f to) {
 	this->from = from;
 	this->to = to;
@@ -92,6 +91,12 @@ void Spring::elasticityForceCounter(Particles& punkt1, Particles& punkt2)
 ofVec3f Spring::countNormalVector(Particles point1, Particles point2)
 {
 	ofVec2f r = ofVec2f(point1.getPos().x - point2.getPos().x, point1.getPos().y - point2.getPos().y);
+	return r.perpendicular();
+}
+
+ofVec3f Spring::counterOfNormalVector()
+{
+	ofVec2f r = ofVec2f(this->getFrom().x - this->getTo().x, this->getFrom().y - this->getTo().y);
 	return r.perpendicular();
 }
 

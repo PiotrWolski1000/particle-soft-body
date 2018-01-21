@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ofMain.h"
-#include "particles.h"
-#include "Spring.h"
 #include <vector>
+#include "particles.h"
+#include "spring.h"
 
 class ofApp : public ofBaseApp{
 	float t = 0;

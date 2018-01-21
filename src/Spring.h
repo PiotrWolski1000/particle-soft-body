@@ -36,4 +36,5 @@ class Spring {
 		void elasticityForceCounter(Particles& point1, Particles& point2);
 		
 		ofVec3f countNormalVector(Particles point1, Particles point2);
+		ofVec3f counterOfNormalVector();
 };
