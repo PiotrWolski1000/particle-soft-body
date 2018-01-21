@@ -1,4 +1,4 @@
-#include "spring.h"
+#include "Spring.h"
 
 Spring::Spring(ofVec3f from, ofVec3f to) {
 	this->from = from;

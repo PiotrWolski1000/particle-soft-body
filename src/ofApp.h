@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include "particles.h"
-#include "spring.h"
+#include "Spring.h"
 #include <vector>
 
 class ofApp : public ofBaseApp{

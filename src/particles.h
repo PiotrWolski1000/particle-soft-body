@@ -3,7 +3,7 @@
 #include <math.h>
 #include <ofVec3f.h>
 #include "ofMain.h"
-#include "spring.h"
+#include "Spring.h"
 
 class Particles{
 
