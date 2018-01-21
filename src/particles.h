@@ -1,6 +1,7 @@
 #include <ofVec3f.h>
 #include <math.h>
 #include "ofMain.h"
+#include "spring.h"
 //#include "definitions.h"//our consts
 
 #pragma once
@@ -24,14 +25,11 @@ public:
 	~Particles() {};
 
 	//moving our particle
-	void move(double dt);
+	void move(double dt, Spring s);
 	void setStartPosition(ofVec3f position);
 	ofVec3f getStartPosition();
-	void preparePositionVector();
 	void setIsStatic(bool value);
-	void updateEuler();
-	void updateVerlet();
-
+	bool getIsStatic();
 
 	int getRadius();
 	int getMass();
@@ -41,6 +39,8 @@ public:
 	ofVec3f getForce();
 
 	void setPos(ofVec3f);
+	void setForce(ofVec3f);
+
 
 	void setPosX(int);
 	void setPosY(int);

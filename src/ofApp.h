@@ -7,6 +7,7 @@
 
 class ofApp : public ofBaseApp{
 	float t = 0;
+	float volume;
 
 	public:
 		void setup();

@@ -1,5 +1,6 @@
 #include "particles.h"
 
+#define G -9.81
 Particles::Particles() {};
 Particles::Particles(float masa = 1, ofVec3f pos = ofVec3f(0, 0, 0), ofVec3f vel = ofVec3f(0, 0, 0), ofVec3f force = ofVec3f(0, 0, 0), int width = 5) {
 	this->m = masa;
@@ -35,6 +36,11 @@ void Particles::setPos(ofVec3f r2)
 	this->r.x = r2.x;
 	this->r.y = r2.y;
 	this->r.z = r2.z;
+}
+
+void Particles::setForce(ofVec3f newForce)
+{
+	this->f = newForce;
 }
 
 void Particles::setPosX(int value)
@@ -91,38 +97,29 @@ void Particles::setBornTime(double time)
 {
 	this->bornTime = time;
 }
-void Particles::move(double dt)
+void Particles::move(double dt, Spring s)
 {
-	float k = 85.0f;
+	if (!this->isStatic) {
+		this->f.x = 0;
+		this->f.z = 0;
+		this->f.y = this->m * G;
+		//this->f.y = 0;
 
-	this->f.x = 0;
-	this->f.z = 0;
-	//this->f.y = -10;
-	this->f.y = 0;
-	
-	//velocity update
-	this->v.x += this->f.x * dt;
-	this->v.y += this->f.y * dt;
-	this->v.z += this->f.z * dt;
+		//velocity update
+		this->v.x += this->f.x * dt;
+		this->v.y += this->f.y * dt;
+		this->v.z += this->f.z * dt;
 
-	//position update
-	this->r.x += this->v.x * dt;
-	this->r.y += this->v.y * dt;
-	this->r.z += this->v.z * dt;
+		//position update
+		this->r.x += this->v.x * dt;
+		this->r.y += this->v.y * dt;
+		this->r.z += this->v.z * dt;
 
-	//what when hit the "floor"?(y == 0)
-	//if (this->r.y <= 0) {
-	//	this->r.y = 0;
-	//}
-
-
-
-	
-
-
-
-
-
+		//what when hit the "floor"?(y == 0)
+		if (this->r.y <= 0) {
+			this->r.y = 0;
+		}
+	}
 }
 
 void Particles::setStartPosition(ofVec3f position) {
@@ -138,34 +135,8 @@ void Particles::setIsStatic(bool value)
 	this->isStatic = value;
 }
 
-void Particles::preparePositionVector()
+bool Particles::getIsStatic()
 {
-	//First position, initial position
-	//particlePosition.x.push_back(RandomMinMax(400, 600));
-	//particlePosition.y.push_back(ofGetHeight());
-
-	////Secound position
-	//particlePosition.x.push_back(particlePosition.x[0] + dt * dt * (particleForce.x / mass));
-	//particlePosition.y.push_back(particlePosition.y[0] + dt * dt * (particleForce.y / mass));
-
-	////Third position, Verlet method
-	//particlePosition.x.push_back(2 * particlePosition.x[1] - particlePosition.x[0] + dt * dt * (particleForce.x / mass));
-	//particlePosition.y.push_back(2 * particlePosition.y[1] - particlePosition.y[0] + dt * dt * (particleForce.y / mass));
+	return this->isStatic;
 }
 
-void Particles::updateVerlet() {
-	//if (!isStatic) {
-	//	v_positionNew = 2 * v_position - v_positionOld + (dt * dt * v_forces / m_mass);
-	//	v_positionOld = v_position;
-	//	v_position = v_positionNew;
-	//}
-}
-
-void Particles::updateEuler() {
-	//if (!isStatic) {
-	//	v_velocity += v_forces * dt;
-	//	v_positionNew = v_position + v_velocity * dt;
-	//	v_positionOld = v_position;
-	//	v_position = v_positionNew;
-	//}
-}

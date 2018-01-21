@@ -1,9 +1,11 @@
 #include "ofApp.h"
-#define N 20 //count of particles in spring chain
+#define N 360 //count of particles in spring chain
 #define COUNTER 0//counter for first 2 steps of animation with euler equation
 //--------------------------------------------------------------
 void ofApp::setup(){//run once at the beginning
 	ofBackground(0, 0, 0, 0);
+
+	volume = 1000;
 
 	initParticles();
 	initSprings();
@@ -19,18 +21,31 @@ void ofApp::update(){//main animation loop
 	
 	std::cout << "particles count: " << particles.size() << ",\nsprings count: " << springs.size() << '\n';
 
-	for (auto& p : particles)
-	{
-		p.move(this->t);
+	//for (auto& p : particles)
+	//{
+	//	p.move(this->t);
+	//}
+
+	for (int i = 0; i < N; i++) {
+		this->particles[i].move(this->t, springs[i]);
+		this->springs[i].countPressure(volume);
+
+		if(i == 0)
+			springs[i].elasticityForceCounter(particles[particles.size()-1], particles[1]);
+		else if(i == particles.size()-1)
+			springs[i].elasticityForceCounter(particles[particles.size() - 2], particles[0]);
+		else
+			springs[i].elasticityForceCounter(particles[i-1], particles[i]);
 	}
-	
+
+
 		this->updateAllSpringsPosition();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){//drawing objects section
 	cam.begin();
-	cam.lookAt(ofVec3f(500, 500, 500));//switch to center of axis coordinates
+	cam.lookAt(ofVec3f(500, 0, 0));//switch to center of axis coordinates
 	for (int i = 0; i < this->particles.size(); i++) {
 
 
@@ -41,11 +56,11 @@ void ofApp::draw(){//drawing objects section
 		else
 			ofSetColor(255, 255, 255);
 		//particless[i].sphere.setRadius(5);
-		particles[i].sphere.setPosition(particles[i].getPos().x, particles[i].getPos().y, particles[i].getPos().z);
-		particles[i].sphere.draw();
+		this->particles[i].sphere.setPosition(particles[i].getPos().x, particles[i].getPos().y, particles[i].getPos().z);
+		this->particles[i].sphere.draw();
 		//drawing lines
 		ofSetColor(243, 255, 115);
-		springs[i].drawLine();
+		this->springs[i].drawLine();
 	}
 	cam.end();
 }
@@ -59,8 +74,8 @@ void ofApp::initParticles() {
 
 	for (int i = 0; i < N; i++) {
 		//int mass = ofRandom(1, 10);
-		int mass = 1;
-		int radius = 5;
+		int mass = 100;
+		int radius = 1;
 		alfa = 360/N * i;
 		//positions
 		//rotation matrix
@@ -86,6 +101,7 @@ void ofApp::initSprings()
 		else {
 			springs.push_back(Spring(particles[i - 1].getPos(), particles[i+1].getPos()));
 		}
+		springs[i].setRestLength();
 	}
 }
 
@@ -113,11 +129,13 @@ void ofApp::musicInit()
 void ofApp::updateAllSpringsPosition()
 {
 	for (int i = 0; i < particles.size(); i++) {
-		if (i > 0 && i != particles.size()-1) {
-			springs[i].updateSpringPosition(particles[i-1].getPos(), particles[i].getPos());
+		if (i == 0 ) {
+			this->springs[i].updateSpringPosition(particles[particles.size()-1].getPos(), particles[1].getPos());
 		}
 		else if(i == particles.size()){//last element, connect to the first one
-			springs[i].updateSpringPosition(particles[particles.size() - 1].getPos(), particles[0].getPos());
+			this->springs[i].updateSpringPosition(particles[particles.size() - 2].getPos(), particles[0].getPos());
 		}
+		else 
+			this->springs[i].updateSpringPosition(particles[i - 1].getPos(), particles[i].getPos());
 	}
 }

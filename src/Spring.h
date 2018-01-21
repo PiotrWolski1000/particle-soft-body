@@ -1,6 +1,8 @@
 #pragma once
 #include "ofMain.h"
-//#include "particles.h"
+#include <math.h>
+
+#include "particles.h"
 
 //#include <ofVec3f.h>
 class Spring {
@@ -10,12 +12,12 @@ class Spring {
 	ofVec3f to;
 	
 	//new from to, when spring is moving 
-	ofVec3f newFrom;
-	ofVec3f newTo;
+	//ofVec3f newFrom;
+
 	
 	float k = 85.0f;
 	float c = 20.0f;//damping constant 
-	float restLength = 0;
+	ofVec3f restLength;
 
 	public:
 		Spring() {};
@@ -27,6 +29,14 @@ class Spring {
 		ofVec3f getTo();
 		void drawLine();
 		void setRestLength();
+
+		float getLength();
+
+		void countPressure(float volume);
+
+		ofVec3f getRestLength();
 		void updateSpringPosition(ofVec3f from, ofVec3f to);
+		void elasticityForceCounter(Particles& punkt1, Particles& punkt2);
 		
+		ofVec3f countNormalVector(Particles point1, Particles point2);
 };
