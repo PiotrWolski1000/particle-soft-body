@@ -31,16 +31,16 @@ void ofApp::update(){//main animation loop
 		
 
 		if(i == 0){
-			this->springs[i].elasticityForceCounter(particles[particles.size()-1], particles[1]);
-			this->springs[i].countPressure(volume, particles[particles.size() - 1], particles[1]);
+			this->springs[i].Spring::elasticityForceCounter(this->particles[this->particles.size()-1], this->particles[1]);
+			this->springs[i].Spring::countPressure(this->volume, this->particles[particles.size() - 1], this->particles[1]);
 		}
 		else if (i == particles.size() - 1) {
-			springs[i].elasticityForceCounter(particles[particles.size() - 2], particles[0]);
-			this->springs[i].countPressure(volume, particles[particles.size() - 2], particles[0]);
+			this->springs[i].Spring::elasticityForceCounter(this->particles[this->particles.size() - 2], this->particles[0]);
+			this->springs[i].Spring::countPressure(this->volume, this->particles[this->particles.size() - 2], this->particles[0]);
 		}
 		else {
-			springs[i].elasticityForceCounter(particles[i-1], particles[i]);
-			this->springs[i].countPressure(volume, particles[i - 1], particles[i]);
+			this->springs[i].Spring::elasticityForceCounter(this->particles[i-1], this->particles[i]);
+			this->springs[i].Spring::countPressure(this->volume, this->particles[i - 1], this->particles[i]);
 		}
 	}
 

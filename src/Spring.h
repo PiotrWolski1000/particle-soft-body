@@ -12,10 +12,8 @@ class Spring {
 	
 	//new from to, when spring is moving 
 	//ofVec3f newFrom;
-
-	
-	float k = 85.0f;
-	float c = 20.0f;//damping constant 
+	//float k = 85.0f;
+	//float c = 20.0f;//damping constant 
 	ofVec3f restLength;
 
 	public:
@@ -31,11 +29,11 @@ class Spring {
 
 		float getLength();
 
-		void countPressure(float volume, Particles&, Particles&);
+		void countPressure(float volume, Particles& p1, Particles& p2);
 
 		ofVec3f getRestLength();
 		void updateSpringPosition(ofVec3f from, ofVec3f to);
-		void elasticityForceCounter(Particles& punkt1, Particles& punkt2);
+		void elasticityForceCounter(Particles& point1, Particles& point2);
 		
 		ofVec3f countNormalVector(Particles point1, Particles point2);
 };

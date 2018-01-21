@@ -1,8 +1,5 @@
-#include "Spring.h"
 #include "spring.h"
 
-//stare = terazniejsze
-//terazniejsze = nowe
 Spring::Spring(ofVec3f from, ofVec3f to) {
 	this->from = from;
 	this->to = to;
@@ -48,7 +45,11 @@ void Spring::countPressure(float volume, Particles& point1, Particles& point2)
 	ofVec2f normalVec = ((tempPosPoint1 - tempPosPoint2).perpendicular()) / getLength();
 	float pressureConst = 0.00001;
 	float pressure = newLength * pressureConst * (1.0f / volume);
-	point1.setForce += normalVec * pressure;
+
+	ofVec3f normalVec3D = ofVec3f(normalVec.x, normalVec.y, 0);
+
+	//auto value = 0;
+	point1.setForce(point1.getForce() + (normalVec3D * pressure));
 }
 
 ofVec3f Spring::getRestLength()
@@ -65,10 +66,6 @@ void Spring::updateSpringPosition(ofVec3f from, ofVec3f to)
 
 void Spring::elasticityForceCounter(Particles& punkt1, Particles& punkt2)
 {
-
-	//Particles* punkt1 = point1;
-	//Particles* punkt2 = point2;
-
 	float newLength = this->getLength();
 
 	float startLength = punkt1.getStartPosition().distance(punkt2.getStartPosition());
