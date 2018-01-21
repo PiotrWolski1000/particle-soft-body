@@ -1,7 +1,6 @@
 #pragma once
 #include "ofMain.h"
 #include <math.h>
-
 #include "particles.h"
 
 //#include <ofVec3f.h>
@@ -32,7 +31,7 @@ class Spring {
 
 		float getLength();
 
-		void countPressure(float volume);
+		void countPressure(float volume, Particles&, Particles&);
 
 		ofVec3f getRestLength();
 		void updateSpringPosition(ofVec3f from, ofVec3f to);

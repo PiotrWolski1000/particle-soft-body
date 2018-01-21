@@ -1,5 +1,5 @@
-#include <ofVec3f.h>
 #include <math.h>
+#include <ofVec3f.h>
 #include "ofMain.h"
 #include "spring.h"
 //#include "definitions.h"//our consts

@@ -28,14 +28,20 @@ void ofApp::update(){//main animation loop
 
 	for (int i = 0; i < N; i++) {
 		this->particles[i].move(this->t, springs[i]);
-		this->springs[i].countPressure(volume);
+		
 
-		if(i == 0)
-			springs[i].elasticityForceCounter(particles[particles.size()-1], particles[1]);
-		else if(i == particles.size()-1)
+		if(i == 0){
+			this->springs[i].elasticityForceCounter(particles[particles.size()-1], particles[1]);
+			this->springs[i].countPressure(volume, particles[particles.size() - 1], particles[1]);
+		}
+		else if (i == particles.size() - 1) {
 			springs[i].elasticityForceCounter(particles[particles.size() - 2], particles[0]);
-		else
+			this->springs[i].countPressure(volume, particles[particles.size() - 2], particles[0]);
+		}
+		else {
 			springs[i].elasticityForceCounter(particles[i-1], particles[i]);
+			this->springs[i].countPressure(volume, particles[i - 1], particles[i]);
+		}
 	}
 
 
@@ -136,6 +142,6 @@ void ofApp::updateAllSpringsPosition()
 			this->springs[i].updateSpringPosition(particles[particles.size() - 2].getPos(), particles[0].getPos());
 		}
 		else 
-			this->springs[i].updateSpringPosition(particles[i - 1].getPos(), particles[i].getPos());
+			this->springs[i].updateSpringPosition(this->particles[i - 1].getPos(), this->particles[i].getPos());
 	}
 }
