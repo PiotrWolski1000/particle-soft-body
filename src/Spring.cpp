@@ -83,6 +83,7 @@ void Spring::elasticityForceCounter(Particles& punkt1, Particles& punkt2)
 	float xForce = (((punkt1.getPos().x - punkt2.getPos().x) / newLength) * force);
 	float yForce = (((punkt1.getPos().y - punkt2.getPos().y) / newLength) * force);
 	
+	cout << "xForce: " << xForce << ", yForce: " << yForce << '\n';
 
 	punkt1.setForce(ofVec3f(punkt1.getForce().x - xForce, punkt1.getForce().y - yForce, 0));
 	punkt2.setForce(ofVec3f(punkt1.getForce().y - xForce, punkt2.getForce().y - yForce, 0));

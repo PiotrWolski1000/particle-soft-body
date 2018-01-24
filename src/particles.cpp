@@ -8,102 +8,71 @@ Particles::Particles(float masa = 1, ofVec3f pos = ofVec3f(0, 0, 0), ofVec3f vel
 	this->f = force;
 	this->radius = width;
 }
-int Particles::getRadius()
-{
+int Particles::getRadius() {
 	return this->radius;
 }
-int Particles::getMass()
-{
+int Particles::getMass() {
 	return this->m;
 }
-ofVec3f Particles::getPos()
-{
-	return this->r;
+ofVec3f Particles::getPos() {
+	return this->r;//return ofvec3f object
 }
 
-ofVec3f Particles::getVel()
-{
-	return this->v;
+ofVec3f Particles::getVel() {
+	return this->v;//return ofvec3f object
 }
-ofVec3f Particles::getForce()
-{
-	return this->f;
+ofVec3f Particles::getForce() {
+	return this->f;//return ofvec3f object
 }
 
-void Particles::setPos(ofVec3f r2)
-{
+void Particles::setPos(ofVec3f r2) {
 	this->r.x = r2.x;
 	this->r.y = r2.y;
 	this->r.z = r2.z;
 }
 
-void Particles::setForce(ofVec3f newForce)
-{
+void Particles::setForce(ofVec3f newForce) {
+
 	this->f = newForce;
 }
 
-void Particles::setPosX(int value)
-{
-	this->r.x = value;
-}
-void Particles::setPosY(int value)
-{
-	this->r.y = value;
-}
-void Particles::setPosZ(int value)
-{
-	this->r.z = value;
+void Particles::updateVerlet(float dt) {
+	if (!this->getIsStatic())
+	{
+		//v_positionNew = 2 * v_position - v_positionOld + (dt*dt*v_forces / m_mass);
+		//v_positionOld = v_position;
+		//v_position = v_positionNew;
+	}
 }
 
-void Particles::setVelX(int value)
-{
-	this->v.x = value;
-}
-void Particles::setVelY(int value)
-{
-	this->v.y = value;
-}
-void Particles::setVelZ(int value)
-{
-	this->v.z = value;
-}
+//void Particles::updateVerlet(float dt) {
+//
+//	//if (!this->getIsStatic()) {
+//	//	v_positionNew = 2 * v_position - v_positionOld + (dt*dt*v_forces / m_mass);
+//	//	v_positionOld = v_position;
+//	//	v_position = v_positionNew;
+//	}
+//}
 
-void Particles::setForceX(int value)
-{
-	this->r.x = value;
+void Particles::updateEuler(float dt) {
+	//v_velocity += v_forces * dt;
+	//v_positionNew = v_position + v_velocity * dt;
+	//v_positionOld = v_position;
+	//v_position = v_positionNew;
 }
-void Particles::setForceY(int value)
-{
-	this->r.y = value;
-}
-void Particles::setForceZ(int value)
-{
-	this->r.z = value;
-}
-void Particles::setLifespan(double dt)
-{
-	this->lifespan = dt;
-}
-double Particles::getLifespan()
-{
-	return this->lifespan;
-}
-double Particles::getBornTime()
-{
-	return this->bornTime;
-}
-void Particles::setBornTime(double time)
-{
-	this->bornTime = time;
-}
-void Particles::move(double dt)
-{
+void Particles::move(double dt) {
+
+	//if (OfApp::getCounter()) {
+	//	if()
+	//}
+
+
 	if (!this->isStatic) {
-		this->f.x = 0;
+		this->f.x = 10;
 		this->f.z = 0;
-		this->f.y = this->m * G;
+		//this->f.y = this->m * G;//gravity on
 		//this->f.y = -1;
-		//this->f.y = 0;
+		this->f.y = 0;
 
 		//velocity update
 		this->v.x += this->f.x * dt;
@@ -115,8 +84,8 @@ void Particles::move(double dt)
 		this->r.y += this->v.y * dt;
 		this->r.z += this->v.z * dt;
 
-		//what when hit the "floor"?(y == 0)
-		//if (this->r.y <= 0) {
+		//
+		//if (this->r.y <= 0) {//what when hit the "floor"?(y == 0)
 		//	this->r.y = 0;
 		//}
 	}
@@ -127,16 +96,14 @@ void Particles::setStartPosition(ofVec3f position) {
 }
 
 ofVec3f Particles::getStartPosition() {
-	return this->startPosition;
+	return this->startPosition;//returning ofvec3f object
 }
 
-void Particles::setIsStatic(bool value)
-{
+void Particles::setIsStatic(bool value) {
 	this->isStatic = value;
 }
 
-bool Particles::getIsStatic()
-{
+bool Particles::getIsStatic() {
 	return this->isStatic;
 }
 

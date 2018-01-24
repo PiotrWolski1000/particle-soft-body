@@ -3,13 +3,13 @@
 #include <ofVec3f.h>
 #include <math.h>
 
-class Particles{
-
+class Particles {
 	float m;
 	ofVec3f r;
 	ofVec3f v;
 	ofVec3f f;
-	ofVec3f startPosition;
+	ofVec3f startPosition;//which are also default position for our springs
+	ofVec3f newPosition;
 	int radius;
 	double lifespan;
 	double bornTime;
@@ -25,39 +25,27 @@ public:
 	//moving our particle
 	void move(double dt);
 	void setStartPosition(ofVec3f position);
-	ofVec3f getStartPosition();
+	ofVec3f getStartPosition();//start position which is set up while constructing
+
+
+	//is a static particle? 
 	void setIsStatic(bool value);
 	bool getIsStatic();
 
 	int getRadius();
 	int getMass();
 
-	ofVec3f getPos();
+	ofVec3f getPos();//get actuall position of an object
 	ofVec3f getVel();
 	ofVec3f getForce();
 
 	void setPos(ofVec3f);
 	void setForce(ofVec3f);
 
+	void updateVerlet(float);
+	void updateEuler(float);
 
-	void setPosX(int);
-	void setPosY(int);
-	void setPosZ(int);
-
-	void setVelX(int);
-	void setVelY(int);
-	void setVelZ(int);
-
-	void setForceX(int);
-	void setForceY(int);
-	void setForceZ(int);
-
-	void setLifespan(double);
-	double getLifespan();
-	double getBornTime();
-	void setBornTime(double);
-
-	ofSpherePrimitive sphere;//our sphere object 
+	ofSpherePrimitive sphere;//sphere object 
 };
 
 

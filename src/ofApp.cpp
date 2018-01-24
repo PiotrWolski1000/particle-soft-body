@@ -18,7 +18,7 @@ void ofApp::setup(){//run once at the beginning
 void ofApp::update(){//main animation loop
 	this->t += 0.001;//time and time step, increased by every update loop step by constant value
 	
-	ofSoundUpdate();//here we can change the music and all the voices we use ein the project
+	ofSoundUpdate();//here we can change the music and all the voices we use in the project
 	
 	std::cout << "particles count: " << particles.size() << ",\nsprings count: " << springs.size() << '\n';
 
