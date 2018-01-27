@@ -23,9 +23,13 @@ void ofApp::setup(){
 
 void ofApp::update(){
 	
+<<<<<<< HEAD
 	//if debug parameter is equals to true, we display info in cmd
 	if(this->debug)
 		this->debugInfo();
+=======
+	ofSoundUpdate();//here we can change the music and all the voices we use in the project
+>>>>>>> 6fe85eec8e5fe9045647779a35e041f8a3c71a2d
 	
 	// grawitacja
 	for (auto &p : myPoints)
