@@ -1,120 +1,139 @@
 #include "ofApp.h"
-#define N 10 //count of particles in spring chain
-#define COUNTER 0//counter for first 2 steps of animation with euler equation
+#include "Point.h"
+#include "Spring.h"
+#include <iostream>
+
+#define N 10
+
 //--------------------------------------------------------------
-void ofApp::setup(){//run once at the beginning
-	ofBackground(0, 0, 0, 0);
-	ofSetFrameRate(10);
+void ofApp::setup(){
+	ofSetBackgroundColor(0, 0, 0);
+	ofSetFrameRate(60);
 
-	volume = 0;
-
-	initParticles();
-	initSprings();
+	this->dt = 0.01;
+	this->G = 90;
+	this->k = 1755.0;
+	this->d = 35.0;
+	this->counter = 0;
 	
-	musicInit();
+	//spring & point inits
+	this->initPoints();
+	this->initSprings();
 }
 
-//--------------------------------------------------------------
-void ofApp::update(){//main animation loop
-	this->t += 0.001;//time and time step, increased by every update loop step by constant value
+void ofApp::update(){
 	
-	ofSoundUpdate();//here we can change the music and all the voices we use ein the project
+	//if debug parameter is equals to true, we display info in cmd
+	if(this->debug)
+		this->debugInfo();
 	
-	std::cout << "particles count: " << particles.size() << ",\nsprings count: " << springs.size() << '\n';
-
-	for (int i = 0; i < N; i++) {
-		this->particles[i].move(this->t);
+	// grawitacja
+	for (auto &p : myPoints)
+	{
+		p->forces.y = p->mass*G;
+		p->forces.x = 0;
+	}
 		
-
-		if(i == 0){
-			this->springs[i].Spring::elasticityForceCounter(this->particles[this->particles.size()-1], this->particles[1]);
-			this->springs[i].Spring::countPressure(this->volume, this->particles[particles.size() - 1], this->particles[1]);
-		}
-		else if (i == particles.size() - 1) {
-			this->springs[i].Spring::elasticityForceCounter(this->particles[this->particles.size() - 2], this->particles[0]);
-			this->springs[i].Spring::countPressure(this->volume, this->particles[this->particles.size() - 2], this->particles[0]);
-		}
-		else {
-			this->springs[i].Spring::elasticityForceCounter(this->particles[i-1], this->particles[i]);
-			this->springs[i].Spring::countPressure(this->volume, this->particles[i - 1], this->particles[i]);
-		}
-	}
-
-
-		this->updateAllSpringsPosition();
-}
-
-//--------------------------------------------------------------
-void ofApp::draw(){//drawing objects section
-	cam.begin();
-	cam.lookAt(ofVec3f(500, 0, 0));//switch to center of axis coordinates
-	for (int i = 0; i < this->particles.size(); i++) {
-
-
-		this->drawCoordinates();//coordinates axis lines
-		//particles
-		if (i == 0)
-			ofSetColor(255, 0, 60);
-		else
-			ofSetColor(255, 255, 255);
-		//particless[i].sphere.setRadius(5);
-		this->particles[i].sphere.setPosition(particles[i].getPos().x, particles[i].getPos().y, particles[i].getPos().z);
-		this->particles[i].sphere.draw();
-		//drawing lines
-		ofSetColor(243, 255, 115);
-		this->springs[i].drawLine();
-	}
-	cam.end();
-}
-
-void ofApp::initParticles() {
-
-	ofVec3f rotationPoint = ofVec3f(500, 500, 0);
-	ofVec3f startElementPosition = ofVec3f(750, 500, 0);
-	ofVec3f tempPosition = ofVec3f(0, 0 , 0);
-	float alfa = 360/N;
-
-	for (int i = 0; i < N; i++) {
-		int mass = ofRandom(1, 10);
-		//int mass = 100;
-		int radius = 1;
-		alfa = 360/N * i;
-		//positions
-		//rotation matrix
-		tempPosition = ofVec3f(((int(startElementPosition.x - rotationPoint.x))*cos(PI / 180 * alfa) + (int(startElementPosition.y - rotationPoint.y))*sin(PI / 180 * alfa) + rotationPoint.x),//x
-			(int(startElementPosition.x - rotationPoint.x))*sin(PI / 180 * alfa) - (int(startElementPosition.y - rotationPoint.y))*cos((PI / 180 * alfa )- rotationPoint.y),//y
-			0);//z
-		//create and setting up the particles
-		particles.push_back(Particles(mass, tempPosition, ofVec3f(0, 0, 0), ofVec3f(0, 0, 0), radius));
-		particles[i].setStartPosition(tempPosition);
+	//elascicity force
+	for (auto &s : mySprings)
+	{
+		//distance between 2 points
+		Point *p1 = myPoints[s->i];		
+		Point *p2 = myPoints[s->j];
 		
-		//only first element is static for now 
-		if(i == 0)
-			particles[i].setIsStatic(true);//is not a static particle
-		else
-			particles[i].setIsStatic(false);
+		ofVec2f pos1 = p1->position;
+		ofVec2f pos2 = p2->position;
+		
+		float distance = pos1.distance(pos2);
+
+		if (distance != 0)
+		{
+			//velocities 
+			p1->velocity = p1->position - p1->positionOld;
+			p2->velocity = p2->position - p2->positionOld;
+			ofVec2f v12d = p1->velocity - p2->velocity;	//velocity difference
+			ofVec2f r12d = pos1 - pos2;//position difference 
+			
+			//forces
+			ofVec2f f = (distance - s->length) * k + (v12d * r12d) * d / distance;
+			ofVec2f F = f * (r12d / distance);
+			p1->forces -= F;
+			p2->forces += F;
+		}
 	}
+
+	//move
+	if (counter < 2)
+		for (auto &p : myPoints)
+		{
+			p->updateEuler(this->dt);
+			counter++;
+		}
+	else
+		for (auto &p : myPoints)
+		{
+			p->updateVerlet(this->dt);
+		}
 }
 
-void ofApp::initSprings()
-{//here we are creating springs
-	for (int i = 0; i < particles.size(); i++) {
-		if (i == 0) {//from the last one particle to first spring
-			this->springs.push_back(Spring(this->particles[this->particles.size() - 1].getPos(), this->particles[0].getPos()));
-		}
-		else if (i == particles.size() - 1) {//from the last 
-			this->springs.push_back(Spring(particles[this->particles.size() - 2].getPos(), this->particles[particles.size() - 1].getPos()));
-		}
-		else {
-			this->springs.push_back(Spring(this->particles[i - 1].getPos(), this->particles[i + 1].getPos()));
-		}
-		this->volume += 0.5 * fabs(this->springs[i].getFrom().x - this->springs[i].getTo().x) * (springs[i].counterOfNormalVector().x * springs[i].getLength());
-		this->springs[i].setRestLength();
-	}
+void ofApp::draw(){
+	this->drawCoordinates();
+	this->drawPoints();
+	this->drawAllSprings();	
 }
 
-void ofApp::drawCoordinates()
+void ofApp::drawAllSprings()
 {
+	for (auto const& s : mySprings)
+	{
+		ofVec2f pos1 = myPoints[s->i]->position;
+		ofVec2f pos2 = myPoints[s->j]->position;
+		ofSetLineWidth(1);
+		ofDrawLine(pos1, pos2);
+	}
+}
+
+void ofApp::drawPoints() {
+	for (auto const &p : myPoints)
+		if (p->isStatic == true) {
+			ofSetColor(255, 0, 0);
+			ofDrawCircle(p->position, 10);
+		}
+		else {
+			ofSetColor(0, 255, 0);
+			ofDrawCircle(p->position, 10);
+		}
+}
+
+void ofApp::initPoints() {
+	ofVec2f rotationPoint = ofVec2f(ofGetWidth() / 2, ofGetHeight() / 2);
+	ofVec2f startElementPosition = ofVec2f((ofGetWidth() / 2)+250, ofGetHeight() / 2);
+	ofVec2f tempPosition = ofVec2f(0, 0);
+	float alfa = 360 / N;
+
+	//first particle is defined with position, later we use matrix rotation
+	myPoints.push_back(new Point(startElementPosition.x, startElementPosition.y, 1, true));
+
+	for (int i = 1; i < N; i++) {
+
+		ofVec2f tempPosition = ofVec3f(((int(startElementPosition.x - rotationPoint.x))*cos(PI / 180 * alfa*i) + (int(startElementPosition.y - rotationPoint.y))*sin(PI / 180 * alfa*i) + rotationPoint.x),//x
+			(int(startElementPosition.x - rotationPoint.x))*sin(PI / 180 * alfa*i) - (int(startElementPosition.y - rotationPoint.y))*cos((PI / 180 * alfa*i) - rotationPoint.y));
+
+		myPoints.push_back(new Point(tempPosition.x, tempPosition.y, 1, false));
+
+		//std::cout << "point: " << i << ", position:  " << myPoints[i]->position<<'\n';
+	}
+}
+
+
+void ofApp::initSprings() {
+
+	for (int i = 0; i < N-1;i++) {
+		mySprings.push_back(new Spring(i, i + 1, myPoints));
+	}
+}
+
+void ofApp::drawCoordinates() {
 	//red color- x-axis
 	ofSetColor(255, 0, 0);
 	ofDrawLine(0, 0, 0, 100000, 0, 0);
@@ -126,24 +145,7 @@ void ofApp::drawCoordinates()
 	ofDrawLine(0, 0, 0, 0, 0, 100000);
 }
 
-void ofApp::musicInit()
-{
-	music.load("bestie.mp3");
-	music.setVolume(1.0f);
-	//music.play();
-
-}
-
-void ofApp::updateAllSpringsPosition()
-{
-	for (int i = 0; i < particles.size(); i++) {
-		if (i == 0) {
-			this->springs[i].updateSpringPosition(particles[particles.size() - 1].getPos(), particles[i].getPos());
-		}
-		else if (i == particles.size()) {//last element, connect to the first one
-			this->springs[i].updateSpringPosition(particles[particles.size() - 2].getPos(), particles[0].getPos());
-		}
-		else
-			this->springs[i].updateSpringPosition(this->particles[i - 1].getPos(), this->particles[i].getPos());
-	}
+void ofApp::debugInfo() {
+	std::cout << "ilosc springow: " << mySprings.size()<<'\n';
+	std::cout << "ilosc pointow: " << myPoints.size()<<'\n';
 }
