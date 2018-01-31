@@ -5,8 +5,12 @@ class Point
 {
 public:
 	Point(float x, float y, float mass, bool isStatic);
+	//radius
+	int radius = 250;
 	void updateVerlet(float);
 	void updateEuler(float);
+
+
 
 	ofVec2f positionOld;
 	ofVec2f position;

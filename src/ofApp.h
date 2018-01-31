@@ -17,6 +17,9 @@ class ofApp : public ofBaseApp{
 		void drawCoordinates();
 		void drawPoints();	   
 		
+		//pressure
+		void countPressure();
+
 		//inits
 		void initPoints();
 		void initSprings();
@@ -28,10 +31,33 @@ class ofApp : public ofBaseApp{
 		float G, k, d;	// gravitional, elascicity and dumping coefficients
 		
 		//other variables & methods
-		//displaying information in command line 
-		bool debug = true;
-		void debugInfo();
+		bool debug = false;//if true debugInfo will display information in command line, change to false, when release 
+		void debugInfo();//displaying information in command line
 		int counter;	// counter for moveUpdate methods(first two steps we're counting with euler)
 		float dt;//time step
+		float volume;
+		float pressure;
+		bool gravityOn = false;
+		//staff
+		ofEasyCam cam;
+		ofSoundPlayer music;
+		void keyPressed(int key) {
+			if (key == 't') {
+				if (!this->gravityOn) {
+					this->G = -10.0f;
+					gravityOn = true;
+				}
+				else {
+					this->G = 0.f;
+					gravityOn = false;
+				}
+				cout << "test!" << G << '\n';
+			}
+		}
+		int nBands = 128;
+		float avgSound;
+		float* fftSmoothed;
+
+		void musicInit();
 };
 
